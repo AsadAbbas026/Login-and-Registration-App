@@ -1,1 +1,1 @@
-"# Login-and-Registration-App" 
+This is a simple login and registration mobile application that is using a local database for storing the users information such as username, password, first name, last name and it has the functionality to also login to the application using username and password. Afterwards it just takes us to a simple button which doesn't do much.
