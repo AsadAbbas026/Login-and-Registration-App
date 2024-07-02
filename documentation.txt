@@ -1,0 +1,76 @@
+Certainly! Here's a detailed documentation of the modifications made to your Flask application for user registration and login using SQLite3 with password hashing using hashlib:
+
+### Application Overview
+
+The Flask application provides endpoints for user registration and login, interacting with an SQLite3 database (`registered_users.db`). Passwords are hashed using the SHA-256 algorithm from the `hashlib` library for storage and verification.
+
+### Changes Made
+
+1. **Database Connection Management**
+   - Added `get_db_connection()` function to establish a connection to the SQLite3 database (`registered_users.db`) and set row factory to `sqlite3.Row` for easier data access.
+   - Implemented `create_table()` function to create the `users` table in the database if it doesn't already exist, ensuring data persistence.
+
+2. **User Registration (`/api/data/register` Endpoint)**
+   - Added `register()` function to handle HTTP POST requests for user registration.
+   - Validates incoming JSON data (`username`, `password`, `confirm_password`, `first_name`, `last_name`) and checks for completeness.
+   - Compares `password` and `confirm_password` fields to ensure they match before proceeding.
+   - Hashes the `password` using SHA-256 algorithm from `hashlib` before storing it in the database.
+   - Handles SQLite `IntegrityError` to return an appropriate error message if the `username` already exists in the database.
+
+3. **User Login (`/api/data/login` Endpoint)**
+   - Implemented `login()` function to handle HTTP POST requests for user login.
+   - Validates incoming JSON data (`username` and `password`) and checks for completeness.
+   - Hashes the `password` using SHA-256 algorithm from `hashlib` before querying the database for user authentication.
+   - Uses a SQL `SELECT` statement to fetch user data based on `username` and `hashed_password`.
+   - Returns appropriate messages (`User logged in successfully!`, `Invalid username or password`, `Failed to login`) based on the authentication result or encountered errors.
+
+4. **Exception Handling**
+   - Added `try-except` blocks around database operations to catch potential exceptions, ensuring graceful error handling.
+   - Logs encountered exceptions to the console for debugging purposes while returning appropriate HTTP status codes (`400`, `401`, `500`) and error messages to the client.
+
+5. **Application Entry Point**
+   - Configured the Flask application to run in debug mode (`debug=True`) and listen on all network interfaces (`host='0.0.0.0'`).
+   - Defined a default route (`'/'`) returning a simple greeting message (`"Hello, Flask"`).
+
+### Dependencies
+
+- **Flask**: Micro web framework for Python.
+- **sqlite3**: Built-in SQLite database library for Python.
+- **hashlib**: Library providing secure hash and message digest algorithms.
+
+### Usage
+
+1. Ensure Python and required libraries (`Flask`, `hashlib`) are installed.
+2. Run the Flask application (`python app.py`) to start the server.
+3. Use a tool like Postman or a similar API client to send HTTP requests (`POST`) to endpoints (`/api/data/register` and `/api/data/login`) with appropriate JSON payloads.
+
+### Example Requests
+
+#### User Registration
+```http
+POST /api/data/register
+Content-Type: application/json
+
+{
+  "username": "example_user",
+  "password": "example_password",
+  "confirm_password": "example_password",
+  "first_name": "John",
+  "last_name": "Doe"
+}
+```
+
+#### User Login
+```http
+POST /api/data/login
+Content-Type: application/json
+
+{
+  "username": "example_user",
+  "password": "example_password"
+}
+```
+
+### Conclusion
+
+The updated Flask application provides robust user registration and login functionalities with improved error handling and security measures using SHA-256 hashing for password storage and verification. Adjustments can be made based on specific application requirements and security policies.
